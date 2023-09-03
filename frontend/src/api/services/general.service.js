@@ -41,6 +41,15 @@ class GeneralService {
             })
             .catch(err => console.info(err));
     }
+
+    async getVersion() {
+        return this.axios_instance
+            .get('/general/version')
+            .then(response => {
+                return response.data.Response;
+            })
+            .catch(err => console.info(err));
+    }
 }
 
 export default new GeneralService();

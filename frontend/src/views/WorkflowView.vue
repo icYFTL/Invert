@@ -97,28 +97,27 @@ export default defineComponent({
                         result += objects[i].FullCommand + '\n';
                     }
                 }
+
+                result += "\n";
+                result += "echo \"Converted from CS:GO by Invert\"\n";
+                result += "echo \"In case of problems write issue at https://github.com/icYFTL/Invert\"\n";
+                result += "echo \"bw, icY\"\n";
                 return result;
             }
 
             const blob = new Blob([objectsToStringWithNewlineSeparator(this.items)], { type: 'text/plain' });
 
-            // Create a URL for the Blob
             const url = URL.createObjectURL(blob);
 
-            // Create a hidden link element to trigger the download
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'invert.cfg'; // Set the desired file name
+            a.download = 'invert.cfg';
             a.style.display = 'none';
 
-            // Append the link to the DOM and trigger the click event to start the download
             document.body.appendChild(a);
             a.click();
 
-            // Clean up by revoking the URL
             URL.revokeObjectURL(url);
-
-            // Remove the link from the DOM (optional)
             document.body.removeChild(a);
         }
     },

@@ -10,7 +10,7 @@ public class GenericHttpResponse : ObjectResult
         JsonConvert.SerializeObject(
             new
             {
-                Status = status, Response = response is string ? new { Message = response } : (object?)response
+                Status = status, Response = (object?)response
             }, Formatting.Indented))
     {
         StatusCode = statusCode;
