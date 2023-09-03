@@ -1,8 +1,6 @@
 ﻿using System.Runtime.Caching;
-using System;
-using System.Linq;
 
-namespace Invert.Utils;
+namespace InvertApi.Utils;
 public class CacheStorage
 {
     private readonly MemoryCache _memoryCache;
@@ -22,12 +20,21 @@ public class CacheStorage
         return _memoryCache.Contains(key);
     }
 
-    public bool Add(string key, object value)
+    public bool Add(string key, object value, TimeSpan? ts = null, bool isAbsolute = true)
     {
+        ts ??= TimeSpan.FromMinutes(15);
         if (Exists(key))
             return false;
 
-        var cacheItemPolicy = new CacheItemPolicy();
+        CacheItemPolicy cacheItemPolicy;
+        if (isAbsolute)
+        {
+            cacheItemPolicy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.Add(ts.Value) };
+        }
+        else
+        {
+            cacheItemPolicy = new CacheItemPolicy { SlidingExpiration = ts.Value };
+        }
 
         _memoryCache.Add(key, value, cacheItemPolicy);
 
