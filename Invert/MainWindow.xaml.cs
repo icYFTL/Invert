@@ -37,6 +37,8 @@ public partial class MainWindow : Window
         {
             tbx.Text = String.Empty;
             _configLogic = null;
+            UndefinedCommandsGv.ItemsSource = null;
+            LogLb.Items.Clear();
             return;
         }
 
@@ -46,6 +48,9 @@ public partial class MainWindow : Window
             _cacheStorage.Update("oldConfigPath", tbx.Text);
 
         _configLogic = null;
+        UndefinedCommandsGv.ItemsSource = null;
+        LogLb.Items.Clear();
+        Parse();
     }
 
 
@@ -56,6 +61,8 @@ public partial class MainWindow : Window
         {
             tbx.Text = String.Empty;
             _configLogic = null;
+            UndefinedCommandsGv.ItemsSource = null;
+            LogLb.Items.Clear();
             return;
         }
 
@@ -65,6 +72,9 @@ public partial class MainWindow : Window
             _cacheStorage.Update("newConfigPath", tbx.Text);
 
         _configLogic = null;
+        UndefinedCommandsGv.ItemsSource = null;
+        LogLb.Items.Clear();
+        Parse();
     }
 
     private void OldConfigLoadBtn_Click(object sender, RoutedEventArgs e)
@@ -153,7 +163,7 @@ public partial class MainWindow : Window
 
         UndefinedCommandsGv.ItemsSource = _configLogic.ParsedCommands;
 
-        Tabs.SelectedIndex = 1;
+        // Tabs.SelectedIndex = 1;
     }
 
     private void FixBtn_Click(object sender, RoutedEventArgs e)

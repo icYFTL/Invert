@@ -74,10 +74,10 @@ public class BaseCommand
 
             foreach (var replaceArg in Constants.ReplaceableArgs)
             {
-                if (arg.Value.Replace("\"", "").Replace(";", "").Trim() == replaceArg.Item1)
+                if (arg.Value.Replace("\"", "").Replace(";", "").Trim().Contains(replaceArg.Item1))
                 {
                     ListLog!.Replaced(String.Format((string)Application.Current.Resources.MergedDictionaries[0]["LogReplaced"], arg.Value, replaceArg.Item2));
-                    newValue = $"\"{replaceArg.Item2}\"";
+                    newValue = arg.Value.Replace(replaceArg.Item1, $"{replaceArg.Item2}");
                     break;
                 }
             }

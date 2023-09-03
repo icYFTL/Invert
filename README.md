@@ -17,12 +17,15 @@
 
 Известные проблемы:
 * UI (может починю, а может нет. И так сойдет)
+* Unbindall похоже ломает движение мышкой (пока что он добавлен в список очистки, т.е. продукт будет автоматически предлагать убрать эту строку из конфига)
 
-Текущая сборка (1.0.0-alpha.1) является **тестовой** и могут наблюдаться различные баги и проблемы.
+Текущая сборка (1.0.0-alpha.2) является **тестовой** и могут наблюдаться различные баги и проблемы.
 Если вы нашли проблему, то просьба сообщить о ней через "Issues" гитхаба.
 
 Скачивая и запуская этот продукт вы подтвержаете, что все дальнейшие действия с продуктом Intern вы делаете на свой страх и риск.
 Я не несу ответственности за любую случившую неполадку с вашими данными и вашим компьютером.
+
+Продукт не заставляет старые бинды работать. К примеру cl_righthand есть как команда, но она не работает и работать не будет.
 
 Данная сборка тестировалась на конфигах для CS2 версии *2000111/13928*
 
@@ -31,28 +34,31 @@
 ## English
 ### Prepare your config for CS2
 
-I wrote a little thing that will convert CS:GO config to CS2 config.
-All you need to do is upload your existing config and the path to which you want to save the new config.
-Then you need to go to the Work tab (Work) and click on Fix (Fix). At this point the config will be analyzed and the log on the left will show the changes.
-In the table with the configuration you can turn off or turn on this or that line of the configuration.
-After that you should click Save and the new config with a custom name will be saved in the folder you specified on the output.
+In general, I wrote a small thing that will convert the CS:GO config to the CS2 config.
+All you need to do is load the existing config and the path where you want to save the new config.
+Next, you need to go to the tab Work (Work) and click on Fix (Fix). At this point, the config will be analyzed and changes will be displayed in the log on the left.
+In the configuration table, you can disable or enable one or another configuration line.
+After that, you need to click Save (Save) and the new config with an arbitrary name will be saved in the folder that you specified to exit.
 
 Advantages:
-* Cleaning the config from obsolete/non-working commands
-* Removing obsolete/non-working command arguments
-* Removing duplicates
-* Removing/disabling alias and references to them
+* Cleaning the config from obsolete / broken commands
+* Remove obsolete/broken command arguments
+* Remove duplicates
+* Removing/disabling alias and links to them
 * Support for 2 languages (English and Russian) p.s. I don't know why, I just had fun writing
 
 Known issues:
-* UI (I may or may not fix it. It's fine)
+* UI (maybe fix it, maybe not. And so it will do)
+* Unbindall seems to break mouse movement (so far it has been added to the cleanup list, i.e. the product will automatically offer to remove this line from the config)
 
-The current build (1.0.0-alpha.1) is **testing** and various bugs and issues may be observed.
-If you find an issue, please report it via the github's "Issues".
+The current build (1.0.0-alpha.2) is a **test** build and may experience various bugs and issues.
+If you find a problem, please report it through the "Issues" github.
 
-By downloading and running this product you confirm that all further actions with the Intern product you do at your own risk.
-I am not responsible for any malfunction with your data and your computer.
+By downloading and running this product, you confirm that you do all further actions with the Intern product at your own peril and risk.
+I am not responsible for any failure that occurs with your data and your computer.
 
-This build was tested on configs for CS2 version *2000111/13928*
+The product does not force old binds to work. For example, cl_righthand is available as a command, but it does not work and will not work.
 
-> The best thank you is an star in the repository
+This assembly was tested on configs for CS2 version *2000111/13928*
+
+> Best thanks - star to repository
