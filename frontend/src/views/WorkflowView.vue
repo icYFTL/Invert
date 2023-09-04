@@ -27,7 +27,7 @@
                 <template #loading>
                     <img
                             src="https://thumbs.gfycat.com/AngelicYellowIberianmole.webp"
-                            style="width: 60px; height: 100px",
+                            style="width: 60px; height: 100px"
                             alt="Loading..."
 
                     />
