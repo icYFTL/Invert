@@ -63,8 +63,8 @@ export default defineComponent({
         const headers: Header[] = [
             {text: "Command", value: "Name", sortable: true},
             {text: "Parameters", value: "ShowParsedArgs", sortable: true},
-            {text: "Add", value: "Add", sortable: true},
-            {text: "Deprecated", value: "Deprecated", sortable: true}
+            {text: "Add", value: "Add", sortable: true}
+            // {text: "Deprecated", value: "Deprecated", sortable: true}
         ];
 
         const items: Item[] = ref(store.state.config.config_data);
