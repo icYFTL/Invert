@@ -27,7 +27,9 @@
                 <template #loading>
                     <img
                             src="https://thumbs.gfycat.com/AngelicYellowIberianmole.webp"
-                            style="width: 60px; height: 100px"
+                            style="width: 60px; height: 100px",
+                            alt="Loading..."
+
                     />
                 </template>
                 <template #item-Add="{Add}">
@@ -35,11 +37,11 @@
                         <input type="checkbox" :checked="Add"/>
                     </div>
                 </template>
-                <template #item-Deprecated="{Deprecated}">
-                    <div class="deprecated-wrapper">
-                        <input type="checkbox" :checked="Deprecated" onclick="return false;"/>
-                    </div>
-                </template>
+<!--                <template #item-Deprecated="{Deprecated}">-->
+<!--                    <div class="deprecated-wrapper">-->
+<!--                        <input type="checkbox" :checked="Deprecated" onclick="return false;"/>-->
+<!--                    </div>-->
+<!--                </template>-->
             </Vue3EasyDataTable>
         </div>
     </div>
@@ -160,15 +162,6 @@ export default defineComponent({
 </script>
 
 <style>
-.fade-enter-active, .fade-leave-active {
-    transition: opacity 0.5s;
-}
-
-.fade-enter, .fade-leave-to /* .fade-leave-active в <2.1.8 */
-{
-    opacity: 0;
-}
-
 .customize-table {
     --easy-table-border: 1px solid #445269;
     --easy-table-row-border: 1px solid #445269;
