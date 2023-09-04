@@ -105,8 +105,6 @@ export default defineComponent({
             return result;
         },
         async onSaveClickAsync() {
-
-
             const blob = new Blob([this.objectsToStringWithNewlineSeparator(this.items, true)], {type: 'text/plain'});
 
             const url = URL.createObjectURL(blob);

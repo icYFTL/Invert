@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+    nginx:
+        build:
+            context: .
+            dockerfile: ./nginx/dockerfile
+        container_name: invert_nginx
+        depends_on:
+          - invert
+        ports:
+          - 9000:80
+        volumes:
+          - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+          - ./logs:/var/log/nginx
+    invert:
+        build:
+            context: .
+            dockerfile: ./InvertApi/dockerfile
+        container_name: invert_api
+        # ports:
+        # - 9001:5001

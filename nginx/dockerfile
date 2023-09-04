@@ -1,0 +1,17 @@
+FROM node:lts as build-stage
+
+WORKDIR /opt/app
+COPY ./frontend/ ./
+
+RUN npm install
+ENV NODE_ENV=production
+ENV VITE_API_URL='/api'
+RUN npm run build
+
+FROM nginx:latest as production-stage
+
+COPY --from=build-stage /opt/app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

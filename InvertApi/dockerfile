@@ -1,0 +1,16 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+WORKDIR /opt/build
+
+COPY ./InvertApi/ ./InvertApi/
+
+WORKDIR ./InvertApi/
+
+RUN dotnet restore ./InvertApi.csproj
+RUN mkdir /opt/app
+RUN dotnet publish ./InvertApi.csproj -c Release -o /opt/app/
+
+WORKDIR /opt/app
+
+EXPOSE 5001
+
+ENTRYPOINT ["dotnet", "InvertApi.dll"]

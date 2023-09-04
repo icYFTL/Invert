@@ -3,7 +3,7 @@ import store from "@/store/index";
 
 export function axios_getInstance() {
     const instance = axios.create({
-        baseURL: import.meta.env.VITE_API_URL,
+        baseURL: import.meta.env.VITE_API_URL
     });
 
     // let token = localStorage.getItem('token');
