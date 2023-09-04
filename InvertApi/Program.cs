@@ -1,4 +1,4 @@
-using InvertApi.Controllers;
+using InvertApi.Logic;
 
 var builder = WebApplication.CreateBuilder(args);
 

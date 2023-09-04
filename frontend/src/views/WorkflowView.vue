@@ -74,38 +74,40 @@ export default defineComponent({
     },
     methods: {
         onFixClick() {
-            GeneralService.fixAsync(JSON.stringify(this.items), this.getLevel).then(async (x) => {
+            GeneralService.fixAsync(this.objectsToStringWithNewlineSeparator(this.items), this.getLevel).then(async (x) => {
                 // await store.dispatch("config/setConfig", x.Response);
                 this.items = x.Response;
             });
         },
         onRemoveDuplicatesClick() {
-            GeneralService.removeDuplicatesAsync(JSON.stringify(this.items)).then(async (x) => {
+            GeneralService.removeDuplicatesAsync(this.objectsToStringWithNewlineSeparator(this.items)).then(async (x) => {
                 // await store.dispatch("config/setConfig", x.Response);
                 this.items = x.Response;
             });
         },
-        async onResetClickAsync(){
+        async onResetClickAsync() {
             await store.dispatch("config/clearConfig");
             await this.$router.push('/');
         },
-        async onSaveClickAsync(){
-            function objectsToStringWithNewlineSeparator(objects) {
-                var result = "";
-                for (var i = 0; i < objects.length; i++) {
-                    if (objects[i].Add === true) {
-                        result += objects[i].FullCommand + '\n';
-                    }
+        objectsToStringWithNewlineSeparator(objects, isEnd = false) {
+            var result = "";
+            for (var i = 0; i < objects.length; i++) {
+                if (objects[i].Add === true) {
+                    result += objects[i].FullCommand + '\n';
                 }
-
+            }
+            if (isEnd) {
                 result += "\n";
                 result += "echo \"Converted from CS:GO by Invert\"\n";
                 result += "echo \"In case of problems write issue at https://github.com/icYFTL/Invert\"\n";
                 result += "echo \"bw, icY\"\n";
-                return result;
             }
+            return result;
+        },
+        async onSaveClickAsync() {
 
-            const blob = new Blob([objectsToStringWithNewlineSeparator(this.items)], { type: 'text/plain' });
+
+            const blob = new Blob([this.objectsToStringWithNewlineSeparator(this.items, true)], {type: 'text/plain'});
 
             const url = URL.createObjectURL(blob);
 

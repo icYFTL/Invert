@@ -1,5 +1,7 @@
 using InvertApi.Commands;
+using InvertApi.Converters;
 using InvertApi.Extensions;
+using InvertApi.Logic;
 using InvertApi.Models.http.response.generic;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -32,11 +34,16 @@ public class ConfigController
 
     #endregion
     private readonly ConfigLogic _configLogic;
+    private readonly JsonSerializerSettings _jsonSettings;
 
     public ConfigController(IServiceScopeFactory scopeFactory)
     {
         var scope = scopeFactory.CreateScope();
         _configLogic = scope.ServiceProvider.GetRequiredService<ConfigLogic>();
+        _jsonSettings = new JsonSerializerSettings
+        {
+            Converters = { new CommandTypeConverter() }
+        };
     }
     
     [HttpGet]
@@ -71,15 +78,16 @@ public class ConfigController
     {
         try
         {
-            var data = JsonConvert.DeserializeObject<List<BaseCommand>>(request.Data.FromBase64());
-            if (data is null)
+            // var data = JsonConvert.DeserializeObject<List<BaseCommand>>(request.Data.FromBase64());
+            var data = await _configLogic.ParseAsync(request.Data.FromBase64());
+            if (data.Result is null)
             {
                 return new FailedHttpResponse
                 {
                     StatusCode = 400
                 };
             }
-            var result = await _configLogic.FixAsync(request.Level, data);
+            var result = await _configLogic.FixAsync(request.Level, (List<BaseCommand>)data.Result);
             return GenericHttpResponse.FromLogicResult(result);
         }
         catch
@@ -97,15 +105,16 @@ public class ConfigController
     {
         try
         {
-            var data = JsonConvert.DeserializeObject<List<BaseCommand>>(request.Data.FromBase64());
-            if (data is null)
+            // var data = JsonConvert.DeserializeObject<List<BaseCommand>>(request.Data.FromBase64());
+            var data = await _configLogic.ParseAsync(request.Data.FromBase64());
+            if (data.Result is null)
             {
                 return new FailedHttpResponse
                 {
                     StatusCode = 400
                 };
             }
-            var result = await _configLogic.RemoveDuplicatesAsync(data);
+            var result = await _configLogic.RemoveDuplicatesAsync((List<BaseCommand>)data.Result);
             return GenericHttpResponse.FromLogicResult(result);
         }
         catch

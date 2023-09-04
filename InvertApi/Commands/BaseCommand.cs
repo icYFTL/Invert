@@ -8,13 +8,13 @@ public class BaseCommand
     public virtual string Name { get; set; } = null!;
     protected virtual List<string> Args { get; } = null!;
     public string? FullCommand { get; set; }
-
     protected Dictionary<string, string> parsedArgs { get; set; }
     public Dictionary<string, string> ParsedArgs => parsedArgs;
     public IEnumerable<string> ShowParsedArgs => parsedArgs.Select(x => x.Value);
     protected virtual Regex? CommandRegex { get; }
     public bool Add { get; set; } = true;
     public bool Deprecated { get; set; } = false;
+    public string Type => GetType().Name;
 
     public virtual void Fix(int level)
     {

@@ -1,32 +1,15 @@
 ﻿using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using InvertApi.Commands;
 using InvertApi.Models.logic;
 
-namespace InvertApi.Controllers;
+namespace InvertApi.Logic;
 
 public class ConfigLogic
 {
-    #region SpecialData
-    public class MessageBoxSettings
-    {
-        public string Message { get; init; } = null!;
-        public string Title { get; init; } = null!;
-
-    }
-    public class LogicResult
-    {
-        public MessageBoxSettings? MessageBoxSettings { get; init; }
-    }
-    #endregion
-    private readonly string _oldConfigFile;
-    private readonly string _newConfigPath;
     public List<BaseCommand> ParsedCommands;
+    private string TargetNamespace => "InvertApi.Commands";
 
-    public bool IsParsed => ParsedCommands.Any();
-    private string _targetNamespace => "Invert.Commands";
-    
     public ConfigLogic()
     {
     }
@@ -43,11 +26,11 @@ public class ConfigLogic
         var assembly = Assembly.GetExecutingAssembly();
 
         var classesInNamespace = assembly.GetTypes()
-            .Where(t => string.Equals(t.Namespace, _targetNamespace, StringComparison.Ordinal) &&
-            !t.Name.StartsWith("Base") &&
-            !t.Name.StartsWith("Generic") &&
-            !t.Name.Contains(">") &&
-            !t.Name.Contains("Constants"))
+            .Where(t => string.Equals(t.Namespace, TargetNamespace, StringComparison.Ordinal) &&
+                        !t.Name.StartsWith("Base") &&
+                        !t.Name.StartsWith("Generic") &&
+                        !t.Name.Contains(">") &&
+                        !t.Name.Contains("Constants"))
             .ToList();
 
         var foundCommands = new List<BaseCommand>();
@@ -60,7 +43,7 @@ public class ConfigLogic
                 var instance = (BaseCommand)Activator.CreateInstance(@class)!;
                 if (instance.IsCommand(command))
                 {
-                    instance = (BaseCommand)Activator.CreateInstance(@class, new { command })!;
+                    instance = (BaseCommand)Activator.CreateInstance(@class, new object[]{ command })!;
                     found = true;
                     foundCommands.Add(instance);
                     break;
@@ -82,7 +65,8 @@ public class ConfigLogic
 
     private async Task _fixAliassesAsync(AliasCommand alias)
     {
-        var aliasRegex = new Regex($"{alias.ParsedArgs["name"]};?", RegexOptions.Compiled);
+        var escapedAliasName = Regex.Escape(alias.ParsedArgs["name"].Replace("\"", ""));
+        var aliasRegex = new Regex($"{escapedAliasName};?", RegexOptions.Compiled);
         foreach (var command in ParsedCommands)
         {
             foreach (var arg in command.ParsedArgs)
@@ -91,13 +75,13 @@ public class ConfigLogic
                 {
                     // if (true)
                     // {
-                        command.ParsedArgs[arg.Key] = "";
-                        command.FullCommandFromArgs();
-                        // _listLog!.Replaced(String.Format((string)MediaTypeNames.Application.Current.Resources.MergedDictionaries[0]["LogAliasRemoved"], arg.Value, (string)MediaTypeNames.Application.Current.Resources.MergedDictionaries[0]["LogAliasRemovedCh1"]));
+                    // command.ParsedArgs[arg.Key] = "";
+                    // command.FullCommandFromArgs();
+                    // _listLog!.Replaced(String.Format((string)MediaTypeNames.Application.Current.Resources.MergedDictionaries[0]["LogAliasRemoved"], arg.Value, (string)MediaTypeNames.Application.Current.Resources.MergedDictionaries[0]["LogAliasRemovedCh1"]));
                     // }
                     // else
                     // {
-                    //     command.Add = false;
+                    command.Add = false;
                     //     // _listLog!.Deprecated(String.Format((string)MediaTypeNames.Application.Current.Resources.MergedDictionaries[0]["LogAliasRemoved"], arg.Value, (string)MediaTypeNames.Application.Current.Resources.MergedDictionaries[0]["LogAliasRemovedCh2"]));
                     // }
                     break;
@@ -109,7 +93,18 @@ public class ConfigLogic
     public async Task<GenericLogicResult> FixAsync(int level, List<BaseCommand> commands)
     {
         ParsedCommands = commands;
-        // foreach (var x in ParsedCommands)
+        foreach (var x in ParsedCommands)
+        {
+            x.Fix(level);
+            if (level > 2)
+            {
+                if (x is AliasCommand command)
+                {
+                    await _fixAliassesAsync(command);
+                }
+            }
+        }
+        // ParsedCommands.AsParallel().ForAll(async (x) =>
         // {
         //     x.Fix(level);
         //     if (level == 3)
@@ -119,18 +114,7 @@ public class ConfigLogic
         //             await _fixAliassesAsync((AliasCommand)x);
         //         }
         //     }
-        // }
-        ParsedCommands.AsParallel().ForAll(async (x) =>
-        {
-            x.Fix(level);
-            if (level == 3)
-            {
-                if (x is AliasCommand)
-                {
-                    await _fixAliassesAsync((AliasCommand)x);
-                }
-            }
-        });
+        // });
 
         return new SuccessLogicResult
         {
@@ -142,7 +126,7 @@ public class ConfigLogic
     {
         ParsedCommands = commands;
         var uniqueObjects = new Dictionary<string, BaseCommand>();
-        
+
         foreach (var command in ParsedCommands)
         {
             if (uniqueObjects.ContainsKey(command.FullCommand!))
@@ -186,6 +170,4 @@ public class ConfigLogic
     //
     //     return newPath;
     // }
-
 }
-
