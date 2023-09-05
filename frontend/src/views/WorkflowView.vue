@@ -263,7 +263,7 @@ export default defineComponent({
 }
 
 .tools-zone div {
-    margin-left: 20px;
+    /*margin-left: 20px;*/
 }
 
 .slider-c #level-slider {
@@ -299,13 +299,13 @@ export default defineComponent({
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
+    gap: 15px;
 }
 
 .bc-btn {
     max-height: 35px;
     width: 200px;
     margin-top: 2px;
-    margin-left: 15px;
 }
 
 .p-dialog .p-dialog-content {
