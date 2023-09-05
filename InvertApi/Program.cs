@@ -18,6 +18,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors(x =>
     {
         x.AllowAnyOrigin();
+        x.AllowAnyHeader();
     });
     
     app.UseSwagger();

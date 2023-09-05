@@ -90,7 +90,7 @@ public class ConfigLogic
         }
     }
 
-    public async Task<GenericLogicResult> FixAsync(int level, List<BaseCommand> commands)
+    public async Task<GenericLogicResult> FixAsync(int level, bool removeDuplicates, bool optimize, List<BaseCommand> commands)
     {
         ParsedCommands = commands;
         foreach (var x in ParsedCommands)
@@ -102,6 +102,16 @@ public class ConfigLogic
                 {
                     await _fixAliassesAsync(command);
                 }
+            }
+
+            if (removeDuplicates)
+            {
+                await RemoveDuplicatesAsync(ParsedCommands);
+            }
+
+            if (optimize)
+            {
+                // TODO: Optimize
             }
         }
         // ParsedCommands.AsParallel().ForAll(async (x) =>

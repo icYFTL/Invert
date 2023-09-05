@@ -30,6 +30,8 @@ public class ConfigController
     public class FixRequest : ParseRequest
     {
         public int Level { get; init; }
+        public bool RemoveDuplicates { get; init; }
+        public bool Optimize { get; init; }
     }
 
     #endregion
@@ -87,7 +89,7 @@ public class ConfigController
                     StatusCode = 400
                 };
             }
-            var result = await _configLogic.FixAsync(request.Level, (List<BaseCommand>)data.Result);
+            var result = await _configLogic.FixAsync(request.Level, request.RemoveDuplicates, request.Optimize, (List<BaseCommand>)data.Result);
             return GenericHttpResponse.FromLogicResult(result);
         }
         catch
@@ -99,30 +101,4 @@ public class ConfigController
         }
     }
     
-    [HttpPost]
-    [Route("remove_duplicates")]
-    public async Task<IActionResult> OnRemoveDuplicatesAsync([FromBody] RemoveDuplicatesRequest request)
-    {
-        try
-        {
-            // var data = JsonConvert.DeserializeObject<List<BaseCommand>>(request.Data.FromBase64());
-            var data = await _configLogic.ParseAsync(request.Data.FromBase64());
-            if (data.Result is null)
-            {
-                return new FailedHttpResponse
-                {
-                    StatusCode = 400
-                };
-            }
-            var result = await _configLogic.RemoveDuplicatesAsync((List<BaseCommand>)data.Result);
-            return GenericHttpResponse.FromLogicResult(result);
-        }
-        catch
-        {
-            return new FailedHttpResponse
-            {
-                StatusCode = 400
-            };
-        }
-    }
 }

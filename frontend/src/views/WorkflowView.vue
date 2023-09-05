@@ -1,15 +1,38 @@
 <template>
     <div class="workflow">
-        <div class="tools-zone">
-            <div class="slider-c">
-                <InputText id="input-slider" v-model.lazy="level_rendered" readonly/>
-                <Slider v-model="level_value" id="level-slider" :step="50"/>
-                <p style="">Level</p>
+        <Dialog v-model:visible="fix_dialog_visible" modal header="Fixing settings" :style="{ width: '50vw' }">
+            <div class="dialog-body">
+                <div class="slider-c">
+                    <InputText id="input-slider" v-model.lazy="level_rendered" readonly v-tooltip="level_description"/>
+                    <Slider v-model="level_value" id="level-slider" :step="50"/>
+                    <p style="">Level</p>
+                </div>
+                <div class="dialog-cbs">
+                    <div>
+                        <Checkbox v-model="remove_duplicates_condition" inputId="remove-duplicates_cb" :binary="true" />
+                        <label for="remove-duplicates_cb" class="ml-2"> Remove duplicates </label>
+                    </div>
+                    <div>
+                        <Checkbox v-model="optimize_condition" inputId="optimize_cb" :binary="true" disabled v-tooltip="'Soon'"/>
+<!--                        v-tooltip="'cl_updaterate etc.'"-->
+                        <label for="optimize_cb" class="ml-2"> Optimize </label>
+                    </div>
+                    <div>
+                        <Checkbox inputId="cs2Format_cb" :binary="true" disabled v-tooltip="'Soon'"/>
+                        <label for="cs2Format_cb" class="ml-2" > Prepare CS2 format config files </label>
+                    </div>
+                </div>
+                <div style="position: fixed; bottom: 15px; width: 100%; left: 0;">
+                    <div class="buttons-c">
+                        <Button class="bc-btn" style="margin-left: 0; margin-top: 0;" label="Do it" @click="onFixClick"/>
+                    </div>
+                </div>
             </div>
+        </Dialog>
+        <div class="tools-zone">
             <div class="buttons-c">
                 <Button class="bc-btn" label="Save" @click="onSaveClickAsync"/>
-                <Button class="bc-btn" label="Fix" @click="onFixClick"/>
-                <Button class="bc-btn" label="Remove duplicates" @click="onRemoveDuplicatesClick"/>
+                <Button class="bc-btn" label="Fix" @click="onShowDialogClick"/>
                 <Button class="bc-btn" label="Select other config" @click="onResetClickAsync"/>
             </div>
         </div>
@@ -26,7 +49,7 @@
             >
                 <template #loading>
                     <img
-                            src="https://thumbs.gfycat.com/AngelicYellowIberianmole.webp"
+                            src="https://media.tenor.com/RVvnVPK-6dcAAAAC/reload-cat.gif"
                             style="width: 60px; height: 100px"
                             alt="Loading..."
 
@@ -37,11 +60,11 @@
                         <input type="checkbox" :checked="Add"/>
                     </div>
                 </template>
-<!--                <template #item-Deprecated="{Deprecated}">-->
-<!--                    <div class="deprecated-wrapper">-->
-<!--                        <input type="checkbox" :checked="Deprecated" onclick="return false;"/>-->
-<!--                    </div>-->
-<!--                </template>-->
+                <!--                <template #item-Deprecated="{Deprecated}">-->
+                <!--                    <div class="deprecated-wrapper">-->
+                <!--                        <input type="checkbox" :checked="Deprecated" onclick="return false;"/>-->
+                <!--                    </div>-->
+                <!--                </template>-->
             </Vue3EasyDataTable>
         </div>
     </div>
@@ -57,6 +80,8 @@ import Slider from 'primevue/slider';
 import InputText from 'primevue/inputtext';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
+import Dialog from "primevue/dialog";
+import Checkbox from 'primevue/checkbox';
 
 export default defineComponent({
     setup() {
@@ -75,11 +100,15 @@ export default defineComponent({
         };
     },
     methods: {
+        onShowDialogClick() {
+            this.fix_dialog_visible = true;
+        },
         onFixClick() {
-            GeneralService.fixAsync(this.objectsToStringWithNewlineSeparator(this.items), this.getLevel).then(async (x) => {
+            GeneralService.fixAsync(this.objectsToStringWithNewlineSeparator(this.items), this.getLevel, this.remove_duplicates_condition).then(async (x) => {
                 // await store.dispatch("config/setConfig", x.Response);
                 this.items = x.Response;
             });
+            this.fix_dialog_visible = false;
         },
         onRemoveDuplicatesClick() {
             GeneralService.removeDuplicatesAsync(this.objectsToStringWithNewlineSeparator(this.items)).then(async (x) => {
@@ -128,7 +157,9 @@ export default defineComponent({
         Slider,
         InputText,
         Card,
-        Button
+        Button,
+        Dialog,
+        Checkbox
     },
     computed: {
         getLevel() {
@@ -145,17 +176,27 @@ export default defineComponent({
     data() {
         return {
             level_value: 0,
-            level_rendered: 'Basic'
+            level_rendered: 'Basic',
+            level_description: 'Only necessary commands (+moveleft -> +left etc.)',
+            fix_dialog_visible: false,
+            remove_duplicates_condition: false,
+            optimize_condition: false
         }
     },
     watch: {
         level_value(old) {
-            if (old === 0)
+            if (old === 0){
                 this.level_rendered = 'Basic'
-            else if (old === 50)
+                this.level_description = 'Only necessary commands (+moveleft -> +left etc.)'
+            }
+            else if (old === 50){
                 this.level_rendered = 'Default'
-            else if (old === 100)
+                this.level_description = 'Basic + removing old obsolete commands'
+            }
+            else if (old === 100){
                 this.level_rendered = 'Extended'
+                this.level_description = 'Default + replace/removing aliases and links to them'
+            }
         }
     }
 });
@@ -246,6 +287,7 @@ export default defineComponent({
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
+    padding-bottom: 10px;
 }
 
 .slider-c * {
@@ -254,6 +296,9 @@ export default defineComponent({
 
 .buttons-c {
     width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
 }
 
 .bc-btn {
@@ -263,4 +308,29 @@ export default defineComponent({
     margin-left: 15px;
 }
 
+.p-dialog .p-dialog-content {
+    background: #181818 !important;
+    color: #fff !important;
+}
+
+.p-dialog .p-dialog-header {
+    background: #181818 !important;
+    color: #fff !important;
+}
+
+.p-dialog {
+    min-height: 200px;
+}
+
+.p-dialog-content {
+    min-height: 200px;
+}
+
+.dialog-cbs {
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    gap: 10%;
+}
 </style>
